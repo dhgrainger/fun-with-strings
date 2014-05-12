@@ -1,5 +1,7 @@
 # lets see if i can take an ingredients string and break it into an ingredient, a unit, and an amount
+
 require 'pry'
+
 array = ["1 pound pasta",
 "2 tablespoons olive oil",
 "1 small onion, diced",
