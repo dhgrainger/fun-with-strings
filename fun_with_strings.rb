@@ -48,11 +48,20 @@ class Ingredients
     correct_word
   end
 
+  # def comma(word)
+  #   binding
+  #   word = word.split('')
+  #   word.delete_if {|i| i == ','}
+  #   word.join
+  # end
+
   def item(words)
     ingredient = ""
     words.each do |word|
       @ingredients.each do |ingred|
-        ingredient = ingred if ingred.include?(word)
+        if word.include?(ingred) || ingred.include?(word)
+          ingredient = ingred
+        end
       end
     end
     ingredient
