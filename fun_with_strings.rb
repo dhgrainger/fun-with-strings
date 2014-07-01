@@ -15,7 +15,7 @@ array = [
 "1 1⁄2 tablespoons balsamic vinegar",
 "1 teaspoon sugar"]
 
-ingredient = [
+ingredients = [
 "salt",
 "pasta",
 "olive oil",
@@ -28,6 +28,23 @@ ingredient = [
 "balsamic vinegar",
 "sugar"]
 
+array2 = ["4 center cut boneless pork chops, pounded to 3/4 inch thick",
+   "1 tsp. Vege-sal or slightly less than 1 tsp. salt",
+   "fresh ground black pepper",
+   "1 tsp. Penzeys Pork Chop Seasoning (optional, contains salt, hickory smoke, gar",
+   "2 T olive oil",
+   "2/3 cup balsamic vinegar",
+   "2 tsp. sugar"]
+
+ingredient2 =["pork",
+  "salt",
+  "pepper",
+  "Seasoning",
+  "olive oil",
+  "balsamic vinegar",
+  "sugar"
+  ]
+
 class Ingredients
   attr_accessor :ingredients, :array, :items
 
@@ -39,32 +56,27 @@ class Ingredients
 
   def unit(words)
     correct_word = ""
-    possible_units = ["tablespoon", "ounce", "teaspoon", "pound", "gram", "oz"]
+    possible_units = ["tablespoon", "ounce", "teaspoon", "pound", "gram", "oz", "cup", "tsp.", "gal.", "gallon", "T.", "t.", "tbsp."]
     words.each do |word|
       possible_units.each do |unit|
-        correct_word = unit if word.include?(unit)
+        if word.include?(unit) || unit.include?(word)
+          correct_word = unit
+        end
       end
     end
     correct_word
   end
 
-  # def comma(word)
-  #   binding
-  #   word = word.split('')
-  #   word.delete_if {|i| i == ','}
-  #   word.join
-  # end
-
-  def item(words)
-    ingredient = ""
+  def product(words)
+    value = ""
     words.each do |word|
       @ingredients.each do |ingred|
         if word.include?(ingred) || ingred.include?(word)
-          ingredient = ingred
+          value = ingred
         end
       end
     end
-    ingredient
+    value
   end
 
   def clean(description, item)
@@ -77,18 +89,20 @@ class Ingredients
   end
 
   def description(string)
+    binding.pry if string.include?('pepper')
     descr = []
     string.each do |word|
-      if word.to_f == 0 && !word.include?(unit(string)) && !word.include?(item(string))
+      if word.to_f == 0 && !word.include?(unit(string)) && !word.include?(product(string))
         descr << word
       end
     end
-
-    if descr.join(' ').include?(item(string))
-      clean(descr, item(string))
+    binding.pry if string.include?('pepper')
+    if descr.join(' ').include?(product(string))
+      clean(descr, product(string))
     else
       descr = descr.join(' ')
     end
+    binding.pry if string.include?('pepper')
     descr
   end
 
@@ -103,7 +117,7 @@ class Ingredients
       if number.length == 1
         total << number[0].to_f
       #for some reason the character in 1/2 is not a backslash but something that looks like a backslash
-      elsif number.include?('⁄') && number.length == 3
+      elsif number.include?('⁄') && number.length == 3 || number.include?('/') && number.length == 3
         number[1] = '/'
         total << Rational(number.join).to_f
       elsif number.length > 1
@@ -122,10 +136,10 @@ class Ingredients
 
   def compare(string)
     amount = []
-    string.each do |word|
-      amount << word if word.to_f != 0
+    (0..string.length/2).each do |x|
+      amount << string[x] if string[x].to_f != 0
     end
-    @items << IngredientLine.new(quantity(amount), unit(string), item(string), description(string))
+    @items << IngredientLine.new(quantity(amount), unit(string), product(string), description(string))
   end
 
   def convert
@@ -145,6 +159,6 @@ class IngredientLine
   end
 end
 
-i = Ingredients.new(array, ingredient)
+i = Ingredients.new(array2, ingredient2)
 i.convert
 binding.pry
